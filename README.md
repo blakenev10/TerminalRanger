@@ -1,5 +1,5 @@
 # TerminalRanger
-Various scripts intended to be used on my GNOME Terminal and Z Shell.
+Various scripts intended to be used on GNOME Terminal and Z Shell.
 
 
 ## rrpull
