@@ -14,8 +14,6 @@ for blacklisted in "${blacklist[@]}"; do
 done
 
 
-
-
 isBlacklisted() {
     local checkPath=$1
 
