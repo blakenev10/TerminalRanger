@@ -1,6 +1,7 @@
 # TerminalRanger
 Various scripts intended to be used on my GNOME Terminal and Z Shell.
 
+
 ## rrpull
 Command that pulls from git repositories found in a specified location.
 
@@ -30,8 +31,21 @@ repos/
         └── .git/
 ```
 
+
 ### Requirements
 - `$REPOS` environment variable defined to be an absolute directory where the `rrpull` command will search for
   repositories.
 - (optional) rrpullblacklist.txt file defined in the `$REPOS` directory with blacklisted paths defined as relative
   directories from `$REPOS`
+
+
+## Installation
+The installation process is as simple as cloning the repo and running the `install` makefile target. See commands below:
+```
+git clone git@github.com:blakenev10/TerminalRanger
+```
+```
+cd TerminalRanger
+sudo make install
+```
+Everything installs to `/usr/local/bin` so `sudo` is required when running the `make install`.
