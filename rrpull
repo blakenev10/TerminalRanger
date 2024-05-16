@@ -7,24 +7,28 @@ BLUE='\033[1;34m'
 NC='\033[0m' # No Color
 
 
-# Read blacklist into an array
 blacklist=()
-while IFS= read -r line; do
-    blacklist+=("$line")
-done < "$REPOS/rrpullblacklist.txt"
+blacklistFile="${REPOS}/rrpullblacklist.txt"
 
+if [ ! -f "${blacklistFile}" ]; then
+    echo -e "[rrpull    ] ${RED}rrpullblacklist.txt not found${NC}"
+else
+    while IFS= read -r line; do
+        blacklist+=("$line")
+    done < "$REPOS/rrpullblacklist.txt"
 
-echo "[rrpull    ] Blacklisted directories:"
-for blacklisted in "${blacklist[@]}"; do
-    echo -e "[rrpull    ]    ${REPOS}${RED}${blacklisted}${NC}"
-done
+    echo "[rrpull    ] Blacklisted directories:"
+    for blacklisted in "${blacklist[@]}"; do
+        echo -e "[rrpull    ]    ${REPOS}${RED}${blacklisted}${NC}"
+    done
+fi
 
 
 isBlacklisted() {
     local checkPath=$1
 
     for blacklisted in "${blacklist[@]}"; do
-        if [[ "$checkPath" == "$blacklisted" || "$checkPath" == "$blacklisted"/* ]]; then
+        if [[ "${checkPath}" == "${blacklisted}" || "${checkPath}" == "${blacklisted}"/* ]]; then
             return 0
         fi
     done
@@ -33,14 +37,14 @@ isBlacklisted() {
 }
 
 
-find "$REPOS" -name ".git" -type d | while read -r gitdir; do
+find "${REPOS}" -name ".git" -type d | while read -r gitdir; do
     repoPath="${gitdir%/.git}"
     relativeSubdir="${repoPath#$REPOS}"
 
     if ! isBlacklisted "$relativeSubdir"; then
         echo "----------------------------------------------------------------------------------------------------"
         echo -e "[rrpull    ] ${BLUE}Pulling ${repoPath}${NC}"
-        (cd "$repoPath" && git pull 2>&1 | sed 's/^/[rrpull git]    /')
+        (cd "${repoPath}" && git pull 2>&1 | sed 's/^/[rrpull git]    /')
     else
         echo "----------------------------------------------------------------------------------------------------"
         echo -e "[rrpull    ] ${YELLOW}Skipping blacklisted repo: ${repoPath}${NC}"
