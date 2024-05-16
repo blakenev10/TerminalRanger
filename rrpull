@@ -13,22 +13,21 @@ blacklistFile="${REPOS}/rrpullblacklist.txt"
 if [ ! -f "${blacklistFile}" ]; then
     echo -e "[rrpull    ] ${RED}rrpullblacklist.txt not found${NC}"
 else
-    while IFS= read -r line; do
-        blacklist+=("$line")
-    done < "$REPOS/rrpullblacklist.txt"
-
     echo "[rrpull    ] Blacklisted directories:"
-    for blacklisted in "${blacklist[@]}"; do
-        echo -e "[rrpull    ]    ${REPOS}${RED}${blacklisted}${NC}"
-    done
+    while IFS= read -r line; do
+        blacklist+=("${REPOS}${line}")
+        echo -e "[rrpull    ]    ${REPOS}${RED}${line}${NC}"
+    done < $blacklistFile
 fi
 
 
 isBlacklisted() {
-    local checkPath=$1
+    local normCheckPath=$(readlink -f "$1")
+    local normBlackPath=()
 
     for blacklisted in "${blacklist[@]}"; do
-        if [[ "${checkPath}" == "${blacklisted}" || "${checkPath}" == "${blacklisted}"/* ]]; then
+        normBlackPath=$(readlink -f "${blacklisted}")
+        if [[ "${normCheckPath}" == "${normBlackPath}" || "${normCheckPath}" == "${normBlackPath}"/* ]]; then
             return 0
         fi
     done
@@ -39,14 +38,14 @@ isBlacklisted() {
 
 find "${REPOS}" -name ".git" -type d | while read -r gitdir; do
     repoPath="${gitdir%/.git}"
-    relativeSubdir="${repoPath#$REPOS}"
+    normRepoPath=$(readlink -f "$repoPath")
 
-    if ! isBlacklisted "$relativeSubdir"; then
+    if ! isBlacklisted "${repoPath}"; then
         echo "----------------------------------------------------------------------------------------------------"
-        echo -e "[rrpull    ] ${BLUE}Pulling ${repoPath}${NC}"
+        echo -e "[rrpull    ] ${BLUE}Pulling ${normRepoPath}${NC}"
         (cd "${repoPath}" && git pull 2>&1 | sed 's/^/[rrpull git]    /')
     else
         echo "----------------------------------------------------------------------------------------------------"
-        echo -e "[rrpull    ] ${YELLOW}Skipping blacklisted repo: ${repoPath}${NC}"
+        echo -e "[rrpull    ] ${YELLOW}Skipping blacklisted repo: ${normRepoPath}${NC}"
     fi
 done
