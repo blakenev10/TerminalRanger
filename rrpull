@@ -1,46 +1,44 @@
 #!/bin/bash
 
-# Read blacklist into an array
-subdirBlacklist=()
-while IFS= read -r line; do
-    subdirBlacklist+=("$line")
-done < "$REPOS/"rrpullblacklist.txt
 
-# Print all blacklisted directories
-echo "Blacklisted directories:"
-for dir in "${subdirBlacklist[@]}"; do
-    echo " - $dir"
+# Read blacklist into an array
+blacklist=()
+while IFS= read -r line; do
+    blacklist+=("$line")
+done < "$REPOS/rrpullblacklist.txt"
+
+
+echo "[rrpull    ] Blacklisted directories:"
+for blacklisted in "${blacklist[@]}"; do
+    echo "[rrpull    ]    $REPOS////$blacklisted"
 done
 
-# Function to check if a directory is in the blacklist
-is_blacklisted() {
-    local check_path=$1
-    for blacklisted in "${subdirBlacklist[@]}"; do
-        # Create a pattern that matches the blacklisted directory and anything under it
-        local pattern="$REPOS/$blacklisted"
-        # Check if the path starts with the blacklisted pattern
-        if [[ "$check_path" == "$pattern" || "$check_path" == "$pattern"/* ]]; then
+
+
+
+isBlacklisted() {
+    local checkPath=$1
+
+    for blacklisted in "${blacklist[@]}"; do
+        if [[ "$checkPath" == "$blacklisted" || "$checkPath" == "$blacklisted"/* ]]; then
             return 0
         fi
     done
+
     return 1
 }
 
-# Loop over subdirectories in $REPOS
-for subdir in "$REPOS"/*; do
-    subdir_rel="${subdir#$REPOS/}" # Get the relative path from $REPOS
-    # Check if the subdir is not in the blacklist
-    if ! is_blacklisted "$subdir"; then
-        # Find all .git directories recursively
-        find "$subdir" -name ".git" -type d | while read -r gitdir; do
-            # Get the git repo path by removing /.git from the path
-            repo_path="${gitdir%/.git}"
-            echo "Pulling ${repo_path##*/}"
-            # Change to the repo directory and pull
-            (cd "$repo_path" && git pull)
-        done
+
+find "$REPOS" -name ".git" -type d | while read -r gitdir; do
+    repoPath="${gitdir%/.git}"
+    relativeSubdir="${repoPath#$REPOS}"
+
+    if ! isBlacklisted "$relativeSubdir"; then
+        echo "----------------------------------------------------------------------------------------------------"
+        echo "[rrpull    ] Pulling $repoPath"
+        (cd "$repoPath" && git pull 2>&1 | sed 's/^/[rrpull git]    /')
+    else
+        echo "----------------------------------------------------------------------------------------------------"
+        echo "[rrpull    ] - Skipping blacklisted repo: $repoPath"
     fi
 done
-
-echo "Done."
-
