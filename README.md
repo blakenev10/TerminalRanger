@@ -39,6 +39,30 @@ repos/
   directories from `$REPOS`
 
 
+### Usage
+Run the command `rrpull` and the rest of the process is automated. No arguments or other behavior is supported.
+
+Once the command is run, the script will search for any files named `.git` in all subdirectories of `$REPOS` and call
+`git pull` in their directory if they are not in a blacklisted directory. Files within blacklisted directories will be
+skipped. Files in subdirectories of blacklisted directories will be skipped. Sample output of the above example can be
+seen below:
+```
+[rrpull    ] Blacklisted directories:
+[rrpull    ]    /repos/Bar
+[rrpull    ]    /repos/Baz/Waz
+----------------------------------------------------------------------------------------------------
+[rrpull    ] Pulling /repos/Baz/Wiz
+[rrpull git]    Already up to date.
+----------------------------------------------------------------------------------------------------
+[rrpull    ] Skipping blacklisted repo: /repos/Baz/Waz
+----------------------------------------------------------------------------------------------------
+[rrpull    ] Skipping blacklisted repo: /repos/Bar/Bar
+----------------------------------------------------------------------------------------------------
+[rrpull    ] Pulling /repos/Foo/Foo
+[rrpull git]    Already up to date.
+```
+
+
 ## Installation
 The installation process is as simple as cloning the repo and running `make install`.
 ```
