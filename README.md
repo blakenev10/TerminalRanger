@@ -34,7 +34,7 @@ repos/
 
 ### Requirements
 - `$REPOS` environment variable defined to be an absolute directory where the `rrpull` command will search for
-  repositories.
+  repositories
 - (optional) rrpullblacklist.txt file defined in the `$REPOS` directory with blacklisted paths defined as relative
   directories from `$REPOS`
 
