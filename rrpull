@@ -1,6 +1,12 @@
 #!/bin/bash
 
 
+RED='\033[1;31m'
+YELLOW='\033[1;33m'
+BLUE='\033[1;34m'
+NC='\033[0m' # No Color
+
+
 # Read blacklist into an array
 blacklist=()
 while IFS= read -r line; do
@@ -10,7 +16,7 @@ done < "$REPOS/rrpullblacklist.txt"
 
 echo "[rrpull    ] Blacklisted directories:"
 for blacklisted in "${blacklist[@]}"; do
-    echo "[rrpull    ]    $REPOS////$blacklisted"
+    echo -e "[rrpull    ]    ${REPOS}${RED}${blacklisted}${NC}"
 done
 
 
@@ -33,10 +39,10 @@ find "$REPOS" -name ".git" -type d | while read -r gitdir; do
 
     if ! isBlacklisted "$relativeSubdir"; then
         echo "----------------------------------------------------------------------------------------------------"
-        echo "[rrpull    ] Pulling $repoPath"
+        echo -e "[rrpull    ] ${BLUE}Pulling ${repoPath}${NC}"
         (cd "$repoPath" && git pull 2>&1 | sed 's/^/[rrpull git]    /')
     else
         echo "----------------------------------------------------------------------------------------------------"
-        echo "[rrpull    ] - Skipping blacklisted repo: $repoPath"
+        echo -e "[rrpull    ] ${YELLOW}Skipping blacklisted repo: ${repoPath}${NC}"
     fi
 done
