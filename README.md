@@ -40,7 +40,7 @@ repos/
 
 
 ## Installation
-The installation process is as simple as cloning the repo and running the `install` makefile target. See commands below:
+The installation process is as simple as cloning the repo and running `make install`.
 ```
 git clone git@github.com:blakenev10/TerminalRanger
 ```
