@@ -27,7 +27,7 @@ function run_build_main {
         echo "Building CMake projects:"
         for DIR in ${BUILD_DIRS}; do
             echo "  ${DIR}"
-            cmake --build "${DIR}" --verbose
+            cmake --build "${DIR}"
         done
     fi
 }
@@ -81,7 +81,7 @@ function run_uninstall {
         for DIR in ${BUILD_DIRS}; do
             if [ -f "${DIR}/install_manifest.txt" ]; then
                 echo "  Uninstalling ${DIR}..."
-                cat "${DIR}/install_manifest.txt" | xargs rm -v
+                cat "${DIR}/install_manifest.txt" | xargs rm
             else
                 echo "  No install_manifest.txt found in ${DIR}, skipping..."
             fi
