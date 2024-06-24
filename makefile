@@ -4,18 +4,12 @@ install:
 	@echo "Installing rrpull to $(PREFIX)/bin"
 	@install -m 755 rrpull $(PREFIX)/bin/rrpull
 
-	@echo "Installing rrinstall to $(PREFIX)/bin"
-	@install -m 755 rrinstall $(PREFIX)/bin/rrinstall
-
-	@echo "Installing rrbuild to $(PREFIX)/bin"
-	@install -m 755 rrbuild $(PREFIX)/bin/rrbuild
+	@echo "Installing rrmaker to $(PREFIX)/bin"
+	@install -m 755 rrmaker $(PREFIX)/bin/rrmaker
 
 uninstall:
 	@echo "Removing rrpull from $(PREFIX)/bin"
 	@rm -f $(PREFIX)/bin/rrpull
 
-	@echo "Removing rrinstall from $(PREFIX)/bin"
-	@rm -f $(PREFIX)/bin/rrinstall
-
-	@echo "Removing rrbuild from $(PREFIX)/bin"
-	@rm -f $(PREFIX)/bin/rrbuild
+	@echo "Removing rrmaker from $(PREFIX)/bin"
+	@rm -f $(PREFIX)/bin/rrmaker
