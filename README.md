@@ -76,6 +76,9 @@ is run in.
 ### Usage
 Run `rrmaker --help` or `rrmaker -h` for information on usage and arguments.
 
+### Requirements
+It's expected that the CMake project is already configured. I'm also not sure how this works with multi-config generators (I generally only use Ninja).
+
 
 ## Installation
 The installation process is as simple as cloning the repo and running `make install`.
