@@ -10,3 +10,6 @@ install:
 uninstall:
 	@echo "Removing rrpull from $(PREFIX)/bin"
 	@rm -f $(PREFIX)/bin/rrpull
+
+	@echo "Removing rrinstall from $(PREFIX)/bin"
+	@rm -f $(PREFIX)/bin/rrinstall
