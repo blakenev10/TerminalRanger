@@ -1,0 +1,112 @@
+#!/bin/bash
+
+# Help function
+function show_help {
+    echo "Usage: rrmaker [MODE] [OPTIONS]"
+    echo "CMake Project Types (rrmaker definitions):"
+    echo "  'Main'           ...CMake build directories following the pattern 'cmake-build-*'"
+    echo "  'Alternative'    ...CMake build directories following the pattern 'cmake-altbuild-*'"
+    echo "Modes:"
+    echo "  -bi   ||   --buildinstall    ...Build and install 'main' CMake projects."
+    echo "  -b    ||   --build           ...Build 'main' CMake projects only."
+    echo "  -ba   ||   --buildalt        ...Build 'main' CMake projects AND 'alt' CMake projects."
+    echo "  -i    ||   --install         ...Install 'main' CMake projects."
+    echo "  -u    ||   --uninstall       ...Uninstall 'main' CMake projects."
+}
+
+
+# Build 'main' CMake projects
+function run_build_main {
+    echo "Searching for main CMake build directories (cmake-build-*)..."
+    BUILD_DIRS=$(find "$(pwd)" -type d -name 'cmake-build-*')
+
+    if [ -z "${BUILD_DIRS}" ]; then
+        echo "No main CMake build directories found to build."
+        exit 1
+    else
+        echo "Building CMake projects:"
+        for DIR in ${BUILD_DIRS}; do
+            echo "  ${DIR}"
+            cmake --build "${DIR}" --verbose
+        done
+    fi
+}
+
+
+# Build 'main' and 'alt' CMake projects
+function run_build_alt {
+    echo "Searching for alternative CMake build directories (cmake-altbuild-*)..."
+    BUILD_DIRS=$(find "$(pwd)" -type d -name 'cmake-altbuild-*')
+
+    if [ -z "${BUILD_DIRS}" ]; then
+        echo "  No alternative CMake build directories found to build."
+        exit 1
+    else
+        echo "  Building CMake projects..."
+        for DIR in ${BUILD_DIRS}; do
+            echo "    ${DIR}"
+            cmake --build "${DIR}"
+        done
+    fi
+}
+
+
+# Install 'main' CMake projects
+function run_install {
+    echo "Searching for main CMake build directories (cmake-build-*)..."
+    BUILD_DIRS=$(find "$(pwd)" -type d -name 'cmake-build-*')
+
+    if [ -z "${BUILD_DIRS}" ]; then
+        echo "  No main CMake build directories found to install."
+        exit 1
+    else
+        echo "  Installing CMake builds:"
+        for DIR in ${BUILD_DIRS}; do
+            echo "    ${DIR}"
+            cmake --install "${DIR}"
+        done
+    fi
+}
+
+
+# Uninstall 'main' CMake projects
+function run_uninstall {
+    echo "Searching for main CMake build directories (cmake-build-*)..."
+    BUILD_DIRS=$(find "$(pwd)" -type d -name 'cmake-build-*')
+
+    if [ -z "${BUILD_DIRS}" ]; then
+        echo "  No main CMake build directories found to uninstall."
+        exit 1
+    else
+        for DIR in ${BUILD_DIRS}; do
+            if [ -f "${DIR}/install_manifest.txt" ]; then
+                echo "  Uninstalling ${DIR}..."
+                cat "${DIR}/install_manifest.txt" | xargs rm -v
+            else
+                echo "  No install_manifest.txt found in ${DIR}, skipping..."
+            fi
+        done
+    fi
+}
+
+
+# Find what mode to run in
+if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+    show_help
+elif [[ "$1" == "--buildinstall" || "$1" == "-bi" ]]; then
+    run_build_install
+elif [[ "$1" == "--build" || "$1" == "-b" ]]; then
+    run_build_main
+elif [[ "$1" == "--buildalt" || "$1" == "-ba" ]]; then
+    run_build_main
+    run_build_alt
+elif [[ "$1" == "--install" || "$1" == "-i" ]]; then
+    run_install
+elif [[ "$1" == "--uninstall" || "$1" == "-u" ]]; then
+    run_uninstall
+else
+    echo "Invalid mode specified."
+    show_help
+    exit 1
+fi
+
