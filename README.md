@@ -63,6 +63,20 @@ seen below:
 ```
 
 
+## rrmaker
+Command that simplifies common CMake actions.
+
+I commonly have multiple CMake configs in a directory that I'd like to build and/or install. Sometimes there are also
+multiple build directories that are already installed that I'd also like to uninstall. This command is used to
+facilitate that process of mulitiple command lines into a single command. The command expects that the user is in the
+parent directory of all the build directories when the command is run. The command will then look through the current
+directory for subdirectories that match either `cmake-build-*` or `cmake-altbuild-*` depending on what mode the command
+is run in.
+
+### Usage
+Run `rrmaker --help` or `rrmaker -h` for information on usage and arguments.
+
+
 ## Installation
 The installation process is as simple as cloning the repo and running `make install`.
 ```
