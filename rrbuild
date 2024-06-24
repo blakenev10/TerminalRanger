@@ -1,12 +1,17 @@
 #!/bin/bash
 
-# Search for directories matching pattern cmake-build-*
-BUILD_DIRS=$(find . -type d -name 'cmake-build-*')
+# Search for build directories
+if [ "$1" == "--all" ]; then
+    echo "Searching for all build directories (cmake-build-* and cmake-testbuild-*)"
+    BUILD_DIRS=$(find "$(pwd)" -type d \( -name 'cmake-build-*' -o -name 'cmake-testbuild-*' \))
+else
+    echo "Searching for build directories (cmake-build-*)"
+    BUILD_DIRS=$(find "$(pwd)" -type d -name 'cmake-build-*')
+fi
 
 # Check if any build directories were found
 if [ -z "${BUILD_DIRS}" ]; then
     echo "No CMake build directories found to build"
-    echo "Make sure build directories match the pattern 'cmake-build-*'"
     exit 1
 else
     echo "Building CMake builds:"
